@@ -2,47 +2,25 @@
 
 {{ range .Members }}
 {{ if not (hiddenMember .)}}
-<tr>
-    <td>
-        <code>{{ fieldName . }}</code></br>
-        <em>
+        | `{{ fieldName . -}}` {{ printf "%s" "| ***" -}}
             {{ if linkForType .Type }}
-                <a href="{{ linkForType .Type}}">
-                    {{ typeDisplayName .Type }}
-                </a>
+                {{- printf "%s" "[" -}}{{- typeDisplayName .Type }}]({{ linkForType .Type}}{{- printf "%s" ")" -}}
             {{ else }}
-                {{ typeDisplayName .Type }}
-            {{ end }}
-        </em>
-    </td>
-    <td>
+                {{- typeDisplayName .Type -}}
+            {{- end -}}
+            {{- printf "%s" "***" }} {{- printf "%s" "|" -}}
         {{ if fieldEmbedded . }}
-            <p>
-                (Members of <code>{{ fieldName . }}</code> are embedded into this type.)
-            </p>
-        {{ end}}
-
+                (Members of `{{- fieldName . -}}` are embedded into this type.)
+        {{- end -}}
         {{ if isOptionalMember .}}
-            <em>(Optional)</em>
-        {{ end }}
+            {{- printf "%s" " ***(Optional)*** " -}}
+        {{- end -}}
 
-        {{ safe (renderComments .CommentLines) }}
-
+        {{- renderComments .CommentLines -}}
     {{ if and (eq (.Type.Name.Name) "ObjectMeta") }}
-        Refer to the Kubernetes API documentation for the fields of the
-        <code>metadata</code> field.
-    {{ end }}
+        {{- printf "%s" "Refer to the Kubernetes API documentation for the fields of the `metadata` field." -}}
+    {{- end -}} {{- printf "%s" "|" -}}
+{{- end -}}
+{{- end -}}
 
-    {{ if or (eq (fieldName .) "spec") }}
-        <br/>
-        <br/>
-        <table>
-            {{ template "members" .Type }}
-        </table>
-    {{ end }}
-    </td>
-</tr>
-{{ end }}
-{{ end }}
-
-{{ end }}
+{{- end -}}
