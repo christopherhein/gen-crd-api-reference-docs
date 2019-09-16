@@ -189,7 +189,7 @@ func main() {
 						klog.Fatal(errors.Wrapf(err, "error getting link for type=%s", t.Name))
 						return ""
 					}
-					return v
+					return strings.ToLower(v)
 				},
 				"anchorIDForType":  func(t *types.Type) string { return anchorIDForLocalType(t, typPkgMap) },
 				"sortedTypes":      sortTypes,
