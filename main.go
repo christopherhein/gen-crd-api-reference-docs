@@ -84,6 +84,24 @@ func init() {
 	if *flOutDir == "" {
 		panic("-out-file or -http-addr must be specified")
 	}
+
+	if err := resolveTemplateDir(*flTemplateDir); err != nil {
+		panic(err)
+	}
+
+}
+
+func resolveTemplateDir(dir string) error {
+	path, err := filepath.Abs(dir)
+	if err != nil {
+		return err
+	}
+	if fi, err := os.Stat(path); err != nil {
+		return errors.Wrapf(err, "cannot read the %s directory", path)
+	} else if !fi.IsDir() {
+		return errors.Errorf("%s path is not a directory", path)
+	}
+	return nil
 }
 
 func main() {
@@ -148,16 +166,6 @@ func main() {
 			references := findTypeReferences(pkgs)
 			typPkgMap := extractTypeToPackageMap(pkgs)
 
-			templateSlice := []string{}
-			for _, file := range AssetNames() {
-				data, err := Asset(file)
-				if err != nil {
-					klog.Fatal(errors.Wrap(err, "template error"))
-				}
-				templateSlice = append(templateSlice, string(data))
-			}
-			templateBody := strings.Join(templateSlice, "\n")
-
 			t, err := template.New("").Funcs(map[string]interface{}{
 				"isExportedType":     isExportedType,
 				"fieldName":          fieldName,
@@ -189,7 +197,7 @@ func main() {
 				"hiddenMember":     func(m types.Member) bool { return hiddenMember(m, config) },
 				"isLocalType":      isLocalType,
 				"isOptionalMember": isOptionalMember,
-			}).Parse(templateBody)
+			}).ParseGlob(filepath.Join(*flTemplateDir, "*.tpl"))
 			if err != nil {
 				klog.Fatal(errors.Wrap(err, "parse error"))
 			}

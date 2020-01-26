@@ -1,10 +1,7 @@
 {{ define "type" }}
----
-title: {{ .Name.Name -}}
-description: From zero to docs deployed on Netlify in just a few minutes
----
 
-## {{ .Name.Name -}}
+
+## {{ .Name.Name }}
     {{ if eq .Kind "Alias" }}(`{{.Underlying}}` alias){{ end -}}
 {{ with (typeReferences .) }}
         Appears on: {{- $prev := "" -}}
