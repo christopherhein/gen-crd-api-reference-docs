@@ -1,4 +1,8 @@
 {{ define "packages" }}
+---
+title: S3::Bucket
+description: From zero to docs deployed on Netlify in just a few minutes
+---
 
 {{ range .packages }}
     {{ range (visibleTypes (sortedTypes .Types))}}
@@ -15,4 +19,5 @@
         | `{{- .Name -}}` | ***{{- .Type -}}*** | {{- .Description -}} |
     {{- end -}}
 {{ end }}
+
 {{ end }}
