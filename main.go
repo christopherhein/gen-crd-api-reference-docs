@@ -166,6 +166,16 @@ func main() {
 			references := findTypeReferences(pkgs)
 			typPkgMap := extractTypeToPackageMap(pkgs)
 
+			templateSlice := []string{}
+			for _, file := range AssetNames() {
+				data, err := Asset(file)
+				if err != nil {
+					klog.Fatal(errors.Wrap(err, "template error"))
+				}
+				templateSlice = append(templateSlice, string(data))
+			}
+			templateBody := strings.Join(templateSlice, "\n")
+
 			t, err := template.New("").Funcs(map[string]interface{}{
 				"isExportedType":     isExportedType,
 				"fieldName":          fieldName,
@@ -197,7 +207,7 @@ func main() {
 				"hiddenMember":     func(m types.Member) bool { return hiddenMember(m, config) },
 				"isLocalType":      isLocalType,
 				"isOptionalMember": isOptionalMember,
-			}).ParseGlob(filepath.Join(*flTemplateDir, "*.tpl"))
+			}).Parse(templateBody)
 			if err != nil {
 				klog.Fatal(errors.Wrap(err, "parse error"))
 			}
