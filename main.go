@@ -84,24 +84,6 @@ func init() {
 	if *flOutDir == "" {
 		panic("-out-file or -http-addr must be specified")
 	}
-
-	if err := resolveTemplateDir(*flTemplateDir); err != nil {
-		panic(err)
-	}
-
-}
-
-func resolveTemplateDir(dir string) error {
-	path, err := filepath.Abs(dir)
-	if err != nil {
-		return err
-	}
-	if fi, err := os.Stat(path); err != nil {
-		return errors.Wrapf(err, "cannot read the %s directory", path)
-	} else if !fi.IsDir() {
-		return errors.Errorf("%s path is not a directory", path)
-	}
-	return nil
 }
 
 func main() {

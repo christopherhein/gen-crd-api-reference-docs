@@ -1,4 +1,4 @@
-module github.com/appscodelabs/gen-crd-api-reference-docs
+module go.hein.dev/gen-crd-api-reference-docs
 
 go 1.12
 
